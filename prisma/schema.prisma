@@ -1,0 +1,68 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "./generated"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Profile {
+  id      Int          @id @default(autoincrement())
+  name    String
+  summary String
+  email   String
+  socials SocialLink[] 
+}
+
+model SocialLink {
+  id        Int     @id @default(autoincrement())
+  name      String
+  url       String
+  profileId Int
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+}
+
+model Project {
+  id            Int             @id @default(autoincrement())
+  name          String
+  summary       String
+  description   String
+  stack         String
+  images        Image[]
+  technologies  Technology[]
+  repositories  Repository[]
+  collaborators Collaborator[]
+}
+
+model Image {
+  id        Int     @id @default(autoincrement())
+  data      Bytes
+  projectId Int
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model Technology {
+  id        Int    @id @default(autoincrement())
+  name      String
+  url       String
+  projectId Int
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model Repository {
+  id        Int    @id @default(autoincrement())
+  name      String
+  url       String
+  projectId Int
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model Collaborator {
+  id           Int    @id @default(autoincrement())
+  name         String
+  portfolioUrl String
+  projectId    Int
+  project      Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
