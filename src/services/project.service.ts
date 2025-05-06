@@ -178,4 +178,18 @@ export async function updateProject(id: number, data: ProjectInput) {
     return updated
 }
 
+export async function deleteProject(id: number) {
+    const existing = await prisma.project.findUnique({
+        where: { id },
+    })
 
+    if (!existing) {
+        throw new NotFoundError('Project not found')
+    }
+
+    await prisma.project.delete({
+        where: { id },
+    })
+
+    return { message: 'Project deleted successfully' }
+}

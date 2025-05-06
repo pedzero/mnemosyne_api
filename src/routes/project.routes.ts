@@ -8,6 +8,6 @@ router.get('/', authenticate, ProjectController.fetchProjectsHandler)
 router.post('/', authenticate, ProjectController.createProjectHandler)
 router.get('/:id', authenticate, ProjectController.fetchSingleProjectHandler)
 router.put('/:id', authenticate, ProjectController.updateProjectHandler)
-// DELETE   /projects:id
+router.delete('/:id', authenticate, ProjectController.deleteProjectHandler)
 
 export default router

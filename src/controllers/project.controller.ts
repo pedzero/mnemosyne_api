@@ -64,3 +64,19 @@ export async function updateProjectHandler(req: Request, res: Response, next: Ne
     }
 }
 
+export async function deleteProjectHandler(req: Request, res: Response, next: NextFunction) {
+    try {
+        const paramResult = idParamSchema.safeParse(req.params)
+        if (!paramResult.success) {
+            throw new BadRequestError('Invalid "id" parameter. Must be an integer')
+        }
+
+        const id = parseInt(paramResult.data.id, 10)
+
+        const message = await ProjectService.deleteProject(id)
+        res.status(200).json(message)
+    } catch (error) {
+        next(error)
+    }
+}
+
