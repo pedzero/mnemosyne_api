@@ -37,6 +37,45 @@ export async function fetchProjects() {
     return projects
 }
 
+export async function fetchSingleProject(id: number) {
+    const projects = await prisma.project.findMany({
+        where: {
+            id
+        },
+        select: {
+            id: true,
+            name: true,
+            summary: true,
+            description: true,
+            stack: true,
+            technologies: {
+                select: {
+                    name: true,
+                    url: true
+                }
+            },
+            repositories: {
+                select: {
+                    name: true,
+                    url: true
+                }
+            },
+            collaborators: {
+                select: {
+                    name: true,
+                    portfolioUrl: true
+                }
+            },
+            images: {
+                select: {
+                    data: true,
+                }
+            }
+        }
+    })
+    return projects
+}
+
 export async function createProject(data: ProjectInput) {
     const createdProject = await prisma.project.create({
         data: {
@@ -82,3 +121,4 @@ export async function createProject(data: ProjectInput) {
 
     return createdProject
 }
+

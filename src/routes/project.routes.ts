@@ -6,7 +6,7 @@ const router = Router()
 
 router.get('/', authenticate, ProjectController.fetchProjectsHandler)
 router.post('/', authenticate, ProjectController.createProjectHandler)
-// GET      /projects/:id
+router.get('/:id', authenticate, ProjectController.fetchSingleProjectHandler)
 // PUT      /projects/:id
 // DELETE   /projects:id
 
