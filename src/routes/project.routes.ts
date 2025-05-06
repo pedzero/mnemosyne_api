@@ -4,8 +4,8 @@ import { authenticate } from '../middlewares/auth'
 
 const router = Router()
 
+router.get('/', authenticate, ProjectController.fetchProjectsHandler)
 router.post('/', authenticate, ProjectController.createProjectHandler)
-// GET      /projects
 // GET      /projects/:id
 // PUT      /projects/:id
 // DELETE   /projects:id

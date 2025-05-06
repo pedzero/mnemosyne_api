@@ -1,6 +1,42 @@
 import { prisma } from '../utils/prisma'
 import { ProjectInput } from '../validators/project.validator'
 
+export async function fetchProjects() {
+    const projects = await prisma.project.findMany({
+        select: {
+            id: true,
+            name: true,
+            summary: true,
+            stack: true,
+            technologies: {
+                select: {
+                    name: true,
+                    url: true
+                }
+            },
+            repositories: {
+                select: {
+                    name: true,
+                    url: true
+                }
+            },
+            collaborators: {
+                select: {
+                    name: true,
+                    portfolioUrl: true
+                }
+            },
+            images: {
+                take: 1,
+                select: {
+                    data: true,
+                }
+            }
+        }
+    })
+    return projects
+}
+
 export async function createProject(data: ProjectInput) {
     const createdProject = await prisma.project.create({
         data: {
