@@ -1,3 +1,4 @@
+import { NotFoundError } from '../utils/errors'
 import { prisma } from '../utils/prisma'
 import { ProjectInput } from '../validators/project.validator'
 
@@ -121,4 +122,60 @@ export async function createProject(data: ProjectInput) {
 
     return createdProject
 }
+
+export async function updateProject(id: number, data: ProjectInput) {
+    const project = await prisma.project.findUnique({
+        where: { id },
+    })
+
+    if (!project) {
+        throw new NotFoundError('Project not found')
+    }
+
+    const updated = await prisma.project.update({
+        where: { id },
+        data: {
+            name: data.name,
+            summary: data.summary,
+            description: data.description,
+            stack: data.stack,
+            technologies: {
+                deleteMany: {},
+                create: data.technologies?.map(t => ({
+                    name: t.name,
+                    url: t.url,
+                })),
+            },
+            repositories: {
+                deleteMany: {},
+                create: data.repositories?.map(r => ({
+                    name: r.name,
+                    url: r.url,
+                })),
+            },
+            collaborators: {
+                deleteMany: {},
+                create: data.collaborators?.map(c => ({
+                    name: c.name,
+                    portfolioUrl: c.portfolioUrl,
+                })),
+            },
+            images: {
+                deleteMany: {},
+                create: data.images?.map(img => ({
+                    data: Buffer.from(img.data, 'base64'),
+                })),
+            },
+        },
+        include: {
+            technologies: true,
+            repositories: true,
+            collaborators: true,
+            images: true,
+        },
+    })
+
+    return updated
+}
+
 

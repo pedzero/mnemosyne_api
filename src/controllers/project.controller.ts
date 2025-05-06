@@ -41,3 +41,26 @@ export async function fetchSingleProjectHandler(req: Request, res: Response, nex
         next(error)
     }
 }
+
+export async function updateProjectHandler(req: Request, res: Response, next: NextFunction) {
+    try {
+        const paramResult = idParamSchema.safeParse(req.params)
+        if (!paramResult.success) {
+            throw new BadRequestError('Invalid "id" parameter. Must be an integer')
+        }
+
+        const bodyResult = projectSchema.safeParse(req.body)
+        if (!bodyResult.success) {
+            throw new BadRequestError('Invalid project data')
+        }
+
+        const id = parseInt(paramResult.data.id, 10)
+        const data = bodyResult.data
+
+        const project = await ProjectService.updateProject(id, data)
+        res.status(200).json(project)
+    } catch (error) {
+        next(error)
+    }
+}
+

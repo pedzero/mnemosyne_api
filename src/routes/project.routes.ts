@@ -7,7 +7,7 @@ const router = Router()
 router.get('/', authenticate, ProjectController.fetchProjectsHandler)
 router.post('/', authenticate, ProjectController.createProjectHandler)
 router.get('/:id', authenticate, ProjectController.fetchSingleProjectHandler)
-// PUT      /projects/:id
+router.put('/:id', authenticate, ProjectController.updateProjectHandler)
 // DELETE   /projects:id
 
 export default router
