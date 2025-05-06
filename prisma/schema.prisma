@@ -14,6 +14,7 @@ model Profile {
   summary String
   email   String
   socials SocialLink[] 
+  educations Education[]
 }
 
 model SocialLink {
@@ -22,6 +23,16 @@ model SocialLink {
   url       String
   profileId Int
   profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+}
+
+model Education {
+  id         Int     @id @default(autoincrement())
+  institution String
+  degree      String
+  startYear   Int
+  endYear     Int?
+  profileId   Int
+  profile     Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
 }
 
 model Project {
