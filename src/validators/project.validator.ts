@@ -16,7 +16,7 @@ const collaboratorSchema = z.object({
 })
 
 const imageSchema = z.object({
-    data: z.string().url()
+    data: z.string()
 })
 
 export const projectSchema = z.object({
