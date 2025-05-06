@@ -3,7 +3,7 @@ import { ProfileInput } from '../validators/profile.validator'
 
 export async function getProfile() {
     const profile = await prisma.profile.findFirst({
-        include: { socials: true },
+        include: { socials: true, educations: true },
     })
     return profile
 }
@@ -20,12 +20,16 @@ export async function updateProfile(data: ProfileInput) {
                 socials: {
                     create: data.socials,
                 },
+                educations: {
+                    create: data.educations,
+                },
             },
-            include: { socials: true },
+            include: { socials: true, educations: true },
         })
     }
 
     await prisma.socialLink.deleteMany({ where: { profileId: existing.id } })
+    await prisma.education.deleteMany({ where: { profileId: existing.id } })
 
     return await prisma.profile.update({
         where: { id: existing.id },
@@ -36,7 +40,10 @@ export async function updateProfile(data: ProfileInput) {
             socials: {
                 create: data.socials,
             },
+            educations: {
+                create: data.educations,
+            },
         },
-        include: { socials: true },
+        include: { socials: true, educations: true },
     })
 }
