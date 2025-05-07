@@ -33,7 +33,7 @@ export async function fetchProjects() {
             images: {
                 take: 1,
                 select: {
-                    data: true,
+                    url: true,
                 }
             }
         }
@@ -72,7 +72,7 @@ export async function fetchSingleProject(id: number) {
             },
             images: {
                 select: {
-                    data: true,
+                    url: true,
                 }
             }
         }
@@ -112,7 +112,7 @@ export async function createProject(data: ProjectInput) {
 
             images: {
                 create: data.images?.map(image => ({
-                    data: Buffer.from(image.data, 'base64'),
+                    url: image.url,
                 })),
             },
         },
@@ -166,9 +166,8 @@ export async function updateProject(id: number, data: ProjectInput) {
                 })),
             },
             images: {
-                deleteMany: {},
-                create: data.images?.map(img => ({
-                    data: Buffer.from(img.data, 'base64'),
+                create: data.images?.map(image => ({
+                    url: image.url,
                 })),
             },
         },
