@@ -1,5 +1,6 @@
 import { NotFoundError } from '../utils/errors'
 import { prisma } from '../utils/prisma'
+import { deleteImage, uploadImage } from '../utils/upload'
 import { ProjectInput } from '../validators/project.validator'
 
 export async function fetchProjects() {
@@ -80,7 +81,14 @@ export async function fetchSingleProject(id: number) {
     return project
 }
 
-export async function createProject(data: ProjectInput) {
+export async function createProject(data: ProjectInput, files: Express.Multer.File[]) {
+    const uploadedPhotos: string[] = []
+
+    for (const file of files) {
+        const url = await uploadImage(file)
+        uploadedPhotos.push(url)
+    }
+
     const createdProject = await prisma.project.create({
         data: {
             name: data.name,
@@ -111,9 +119,7 @@ export async function createProject(data: ProjectInput) {
             },
 
             images: {
-                create: data.images?.map(image => ({
-                    url: image.url,
-                })),
+                create: uploadedPhotos.map(url => ({ url })),
             },
         },
         include: {
@@ -127,13 +133,29 @@ export async function createProject(data: ProjectInput) {
     return createdProject
 }
 
-export async function updateProject(id: number, data: ProjectInput) {
+export async function updateProject(id: number, data: ProjectInput, files: Express.Multer.File[]) {
     const project = await prisma.project.findUnique({
         where: { id },
+        include: { images: true },
     })
 
     if (!project) {
         throw new NotFoundError('Project not found')
+    }
+
+    for (const image of project.images) {
+        const fileName = image.url.split('/').pop()
+        if (fileName) {
+            await deleteImage(fileName)
+        }
+    }
+
+    await prisma.image.deleteMany({ where: { projectId: id } })
+
+    const uploadedPhotos: string[] = []
+    for (const file of files) {
+        const url = await uploadImage(file)
+        uploadedPhotos.push(url)
     }
 
     const updated = await prisma.project.update({
@@ -166,9 +188,7 @@ export async function updateProject(id: number, data: ProjectInput) {
                 })),
             },
             images: {
-                create: data.images?.map(image => ({
-                    url: image.url,
-                })),
+                create: uploadedPhotos.map(url => ({ url })),
             },
         },
         include: {
@@ -185,10 +205,18 @@ export async function updateProject(id: number, data: ProjectInput) {
 export async function deleteProject(id: number) {
     const existing = await prisma.project.findUnique({
         where: { id },
+        include: { images: true },
     })
 
     if (!existing) {
         throw new NotFoundError('Project not found')
+    }
+
+    for (const image of existing.images) {
+        const fileName = image.url.split('/').pop()
+        if (fileName) {
+            await deleteImage(fileName)
+        }
     }
 
     await prisma.project.delete({

@@ -17,8 +17,9 @@ export async function createProjectHandler(req: Request, res: Response, next: Ne
     try {
         const { ...body } = req.body
         const data = projectSchema.parse(body)
+        const files = req.files as Express.Multer.File[]
 
-        const project = await ProjectService.createProject(data)
+        const project = await ProjectService.createProject(data, files)
         res.status(201).json(project)
     } catch (error) {
         next(error)
@@ -56,8 +57,9 @@ export async function updateProjectHandler(req: Request, res: Response, next: Ne
 
         const id = parseInt(paramResult.data.id, 10)
         const data = bodyResult.data
+        const files = req.files as Express.Multer.File[]
 
-        const project = await ProjectService.updateProject(id, data)
+        const project = await ProjectService.updateProject(id, data, files)
         res.status(200).json(project)
     } catch (error) {
         next(error)
