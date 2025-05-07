@@ -24,6 +24,7 @@ export const projectSchema = z.object({
     summary: z.string().min(1),
     description: z.string().min(1),
     stack: z.enum(['frontend', 'backend', 'full']),
+    order: z.number().optional(),
     technologies: z.array(technologySchema).optional(),
     repositories: z.array(repositorySchema).optional(),
     collaborators: z.array(collaboratorSchema).optional(),

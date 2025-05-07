@@ -41,6 +41,7 @@ model Project {
   summary       String
   description   String
   stack         String
+  order         Int       @default(0)
   images        Image[]
   technologies  Technology[]
   repositories  Repository[]

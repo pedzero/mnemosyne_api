@@ -4,6 +4,9 @@ import { ProjectInput } from '../validators/project.validator'
 
 export async function fetchProjects() {
     const projects = await prisma.project.findMany({
+        orderBy: {
+            order: 'asc',
+        },
         select: {
             id: true,
             name: true,
@@ -39,7 +42,7 @@ export async function fetchProjects() {
 }
 
 export async function fetchSingleProject(id: number) {
-    const projects = await prisma.project.findMany({
+    const project = await prisma.project.findUnique({
         where: {
             id
         },
@@ -74,7 +77,7 @@ export async function fetchSingleProject(id: number) {
             }
         }
     })
-    return projects
+    return project
 }
 
 export async function createProject(data: ProjectInput) {
@@ -84,6 +87,7 @@ export async function createProject(data: ProjectInput) {
             summary: data.summary,
             description: data.description,
             stack: data.stack,
+            order: data.order,
 
             technologies: {
                 create: data.technologies?.map(tech => ({
@@ -139,6 +143,7 @@ export async function updateProject(id: number, data: ProjectInput) {
             summary: data.summary,
             description: data.description,
             stack: data.stack,
+            order: data.order,
             technologies: {
                 deleteMany: {},
                 create: data.technologies?.map(t => ({
