@@ -83,10 +83,11 @@ export async function fetchSingleProject(id: number) {
 
 export async function createProject(data: ProjectInput, files: Express.Multer.File[]) {
     const uploadedPhotos: string[] = []
-
-    for (const file of files) {
-        const url = await uploadImage(file)
-        uploadedPhotos.push(url)
+    if (files) {
+        for (const file of files) {
+            const url = await uploadImage(file)
+            uploadedPhotos.push(url)
+        }
     }
 
     const createdProject = await prisma.project.create({
@@ -153,9 +154,11 @@ export async function updateProject(id: number, data: ProjectInput, files: Expre
     await prisma.image.deleteMany({ where: { projectId: id } })
 
     const uploadedPhotos: string[] = []
-    for (const file of files) {
-        const url = await uploadImage(file)
-        uploadedPhotos.push(url)
+    if (files) {
+        for (const file of files) {
+            const url = await uploadImage(file)
+            uploadedPhotos.push(url)
+        }
     }
 
     const updated = await prisma.project.update({
