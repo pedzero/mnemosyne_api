@@ -6,7 +6,6 @@ const {
     MINIO_BUCKET,
     MINIO_USE_SSL,
     MINIO_ENDPOINT,
-    MINIO_PORT,
 } = process.env
 
 const BUCKET_NAME = MINIO_BUCKET
@@ -30,7 +29,7 @@ export async function uploadImage(file: UploadedFile): Promise<string> {
     try {
         await s3.send(new PutObjectCommand(params))
 
-        const fileUrl = `http${MINIO_USE_SSL === 'true' ? 's' : ''}://${MINIO_ENDPOINT}:${MINIO_PORT}/${BUCKET_NAME}/${fileName}`
+        const fileUrl = `http${MINIO_USE_SSL === 'true' ? 's' : ''}://${MINIO_ENDPOINT}/${BUCKET_NAME}/${fileName}`
         return fileUrl
     } catch (error) {
         throw new AppError('Something went wrong. Try again later.', 503)
