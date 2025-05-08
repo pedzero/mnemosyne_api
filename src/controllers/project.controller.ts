@@ -15,7 +15,25 @@ export async function fetchProjectsHandler(req: Request, res: Response, next: Ne
 
 export async function createProjectHandler(req: Request, res: Response, next: NextFunction) {
     try {
-        const { ...body } = req.body
+        const parseJSON = <T = any>(value: unknown): T | undefined => {
+            if (typeof value === 'string') {
+                try {
+                    return JSON.parse(value)
+                } catch {
+                    return undefined
+                }
+            }
+            return undefined
+        }
+
+        const body = {
+            ...req.body,
+            order: req.body.order ? Number(req.body.order) : undefined,
+            technologies: parseJSON(req.body.technologies),
+            repositories: parseJSON(req.body.repositories),
+            collaborators: parseJSON(req.body.collaborators),
+        }
+
         const data = projectSchema.parse(body)
         const files = req.files as Express.Multer.File[]
 
@@ -50,7 +68,26 @@ export async function updateProjectHandler(req: Request, res: Response, next: Ne
             throw new BadRequestError('Invalid "id" parameter. Must be an integer')
         }
 
-        const bodyResult = projectSchema.safeParse(req.body)
+        const parseJSON = <T = any>(value: unknown): T | undefined => {
+            if (typeof value === 'string') {
+                try {
+                    return JSON.parse(value)
+                } catch {
+                    return undefined
+                }
+            }
+            return undefined
+        }
+
+        const body = {
+            ...req.body,
+            order: req.body.order ? Number(req.body.order) : undefined,
+            technologies: parseJSON(req.body.technologies),
+            repositories: parseJSON(req.body.repositories),
+            collaborators: parseJSON(req.body.collaborators),
+        }
+
+        const bodyResult = projectSchema.safeParse(body)
         if (!bodyResult.success) {
             throw new BadRequestError('Invalid project data')
         }
