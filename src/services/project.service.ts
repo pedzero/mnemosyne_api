@@ -13,6 +13,7 @@ export async function fetchProjects() {
             name: true,
             summary: true,
             stack: true,
+            order: true,
             technologies: {
                 select: {
                     name: true,
@@ -53,6 +54,7 @@ export async function fetchSingleProject(id: number) {
             summary: true,
             description: true,
             stack: true,
+            order: true,
             technologies: {
                 select: {
                     name: true,
